@@ -125,6 +125,18 @@ sudo netfilter-persistent save
 }
 
 #****************************************************************************
+CreateRunScript()
+#****************************************************************************
+{
+cat <<-EOF > ~/minecraft/run.sh
+#!/bin/bash
+MaxMemory=${MaxMemory}
+java -Xmx\${MaxMemory}M -Xms\${MaxMemory}M -jar forge-${ForgeVersion}.jar nogui
+EOF
+chmod +x ~/minecraft/run.sh
+}
+
+#****************************************************************************
 # Main Shell Script Start
 #****************************************************************************
 Start
@@ -134,6 +146,7 @@ RunInstaller
 FirstRun
 EULA
 FireWall
+CreateRunScript
 
 echo "서버 설치가 완료 되었습니다."
 
