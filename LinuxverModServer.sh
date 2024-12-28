@@ -10,9 +10,9 @@ case $answer in
 y|Y)
 break;;
 n|N)
-echo Aborting; exit;;
+echo "Aborting. Press any key to exit."; read -n 1; exit;;
 *)
-echo "올바른 입력이 아닙니다. 스크립트를 종료합니다."; exit;;
+echo "올바른 입력이 아닙니다. 스크립트를 종료합니다."; echo "Press any key to exit."; read -n 1; exit;;
 esac
 
 echo
@@ -41,7 +41,7 @@ wget https://maven.minecraftforge.net/net/minecraftforge/forge/${ForgeVersion}/f
 if [ ${?} != "0" ]
 then
 echo "포지버전오류"
-exit 1
+echo "Press any key to exit."; read -n 1; exit 1
 fi
 }
 
@@ -58,7 +58,7 @@ elif [[ "$MinecraftVersion" =~ ^1\.20\.[5-9]$|^1\.2[1-9]\.[0-9]+$ ]]; then
 JavaVersion=21
 else
 echo "알 수 없는 Minecraft 버전입니다. 스크립트를 종료합니다."
-exit 1
+echo "Press any key to exit."; read -n 1; exit 1
 fi
 
 # Java 설치
@@ -77,7 +77,7 @@ sudo apt install openjdk-21-jdk -y
 ;;
 *)
 echo "지원되지 않는 Java 버전입니다. 스크립트를 종료합니다."
-exit 1
+echo "Press any key to exit."; read -n 1; exit 1
 ;;
 esac
 }
@@ -94,7 +94,7 @@ then
 echo "설치오류. 처음부터 다시실행부탁드립니다."
 cd ~ && rm -rf ./minecraft
 sleep 2
-exit 1
+echo "Press any key to exit."; read -n 1; exit 1
 fi
 }
 
@@ -103,7 +103,11 @@ FirstRun()
 #****************************************************************************
 {
 cd ~/minecraft
+if [ "$JavaVersion" -eq 8 ]; then
 java -Xmx${MaxMemory}M -jar forge-${ForgeVersion}.jar nogui
+else
+chmod +x ~/minecraft/run.sh
+fi
 }
 
 #****************************************************************************
@@ -128,12 +132,14 @@ sudo netfilter-persistent save
 CreateRunScript()
 #****************************************************************************
 {
+if [ ! -f ~/minecraft/run.sh ]; then
 cat <<-EOF > ~/minecraft/run.sh
 #!/bin/bash
 MaxMemory=${MaxMemory}
 java -Xmx\${MaxMemory}M -Xms\${MaxMemory}M -jar forge-${ForgeVersion}.jar nogui
 EOF
 chmod +x ~/minecraft/run.sh
+fi
 }
 
 #****************************************************************************
@@ -149,5 +155,6 @@ FireWall
 CreateRunScript
 
 echo "서버 설치가 완료 되었습니다."
+echo "Press any key to exit."; read -n 1
 
 exit 0
